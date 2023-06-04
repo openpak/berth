@@ -25,3 +25,4 @@ void ActionReset();
 void ActionShutdown();
 void ActionScreenshot();
 void ActionActivateBoundSnapshot(int slot, bool save);
+void ActionLoadSnapshotChecked(const char *name);
