@@ -23,7 +23,7 @@
 #define HW_XBOX_NV2A_PGRAPH_GLSL_GEOM_H
 
 #include "qemu/mstring.h"
-#include "hw/xbox/nv2a/pgraph/vsh.h"
+#include "vsh.h"
 
 typedef struct GenGeomGlslOptions {
     bool vulkan;
