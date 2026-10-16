@@ -539,6 +539,10 @@ static int net_slirp_init(NetClientState *peer, const char *model,
         error_setg(errp, "Failed to parse DNS");
         return -1;
     }
+    /* Berth: a DNS address outside the guest network is handed out by DHCP and
+     * reached through ordinary NAT instead of slirp's resolver proxy. */
+    bool dns_external = vnameserver && !restricted &&
+                        (dns.s_addr & mask.s_addr) != net.s_addr;
     if (restricted && (dns.s_addr & mask.s_addr) != net.s_addr) {
         error_setg(errp, "DNS doesn't belong to network");
         return -1;
@@ -659,6 +663,7 @@ static int net_slirp_init(NetClientState *peer, const char *model,
     cfg.bootfile = bootfile;
     cfg.vdhcp_start = dhcp;
     cfg.vnameserver = dns;
+    cfg.disable_dns = dns_external;
     cfg.vnameserver6 = ip6_dns;
     cfg.vdnssearch = dnssearch;
     cfg.vdomainname = vdomainname;

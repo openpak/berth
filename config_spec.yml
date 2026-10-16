@@ -340,6 +340,9 @@ net:
       type: string
       default: 1.2.3.4:9368
   nat:
+    dns:
+      type: string
+      default: ''
     forward_ports:
       type: array
       items:
