@@ -1,5 +1,10 @@
 # Berth architecture and bring-up
 
+Cross-repository service architecture is maintained in
+[Original Xbox on OpenPak](https://github.com/openpak/docs/blob/main/xbox/native-service-architecture.md).
+That plan is authoritative for core integration, service boundaries and routing;
+the notes below describe emulator bring-up.
+
 ## Invariants
 
 - Original Xbox guest kernel, dashboard and title code own protocol behavior.

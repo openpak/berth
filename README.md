@@ -16,10 +16,11 @@ removed simply because they touch hardware.
 
 ## Current state
 
-The Linux emulator builds and runs supplied guest software to the HDD's
-placeholder dashboard. The supplied HDD does not contain the official Microsoft
-dashboard. Native service parity and retail dashboard boot remain unverified.
-Upstream emulation behavior is retained.
+The Linux emulator builds and boots the user-supplied 5960 Microsoft dashboard
+from a separate test disk. Main menu and native connection-test screens render
+with OpenGL; a Vulkan GPU-command assertion remains under investigation. Native
+OpenPak service compatibility is not yet implemented or validated. See the
+handoff for captures and the exact setup. Upstream emulation behavior is retained.
 
 Berth uses `berth.toml` and SDL's `OpenPak/Berth` preferences directory, separate
 from xemu. Upstream update checks default to off. Internal xemu names and credits
