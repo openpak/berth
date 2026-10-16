@@ -39,7 +39,7 @@
 
 struct config g_config;
 
-static const char *filename = "xemu.toml";
+static const char *filename = "berth.toml";
 static const char *settings_path;
 static std::string error_msg;
 
@@ -82,7 +82,7 @@ const char *xemu_settings_get_base_path(void)
         assert(base != NULL);
         base_path = g_strdup(base);
     } else {
-        char *base = SDL_GetPrefPath("xemu", "xemu");
+        char *base = SDL_GetPrefPath("OpenPak", "Berth");
         assert(base != NULL);
         base_path = g_strdup(base);
         SDL_free(base);

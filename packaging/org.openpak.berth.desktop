@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Berth
+Comment=Original Xbox emulator by OpenPak
+Exec=berth
+Icon=org.openpak.berth
+Terminal=false
+Categories=Game;Emulator;
+StartupWMClass=org.openpak.berth
