@@ -1043,7 +1043,7 @@ static void display_very_early_init(DisplayOptions *o)
         SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    char *title = g_strdup_printf("xemu | v%s"
+    char *title = g_strdup_printf("Berth | xemu v%s"
 #ifdef XEMU_DEBUG_BUILD
                                   " Debug"
 #endif
@@ -1126,7 +1126,15 @@ static void display_very_early_init(DisplayOptions *o)
 
     int width, height, channels = 0;
     stbi_set_flip_vertically_on_load(0);
-    unsigned char *icon_data = stbi_load_from_memory(xemu_64x64_data, xemu_64x64_size, &width, &height, &channels, 4);
+    char *icon_path =
+        g_build_filename(SDL_GetBasePath(), "org.openpak.berth.png", NULL);
+    unsigned char *icon_data =
+        stbi_load(icon_path, &width, &height, &channels, 4);
+    g_free(icon_path);
+    if (!icon_data) {
+        icon_data = stbi_load_from_memory(xemu_64x64_data, xemu_64x64_size,
+                                          &width, &height, &channels, 4);
+    }
     if (icon_data) {
         SDL_Surface *icon = SDL_CreateSurfaceFrom(width, height, SDL_PIXELFORMAT_RGBA32, icon_data, width*4);
         if (icon) {
@@ -1331,13 +1339,13 @@ static void setup_nvidia_profile(void)
 
 static void init_sdl_app_metadata(void)
 {
-    SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_NAME_STRING, "xemu");
+    SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_NAME_STRING, "Berth");
     SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_VERSION_STRING,
                                xemu_version);
     SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_IDENTIFIER_STRING,
-                               "app.xemu.xemu");
+                               "org.openpak.berth");
     SDL_SetAppMetadataProperty(SDL_PROP_APP_METADATA_URL_STRING,
-                               "https://xemu.app");
+                               "https://github.com/openpak/berth");
 }
 
 int main(int argc, char **argv)
