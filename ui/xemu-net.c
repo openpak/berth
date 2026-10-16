@@ -59,6 +59,9 @@ void xemu_net_enable(void)
         qdict = qdict_new();
         qdict_put_str(qdict, "id",   id);
         qdict_put_str(qdict, "type", "user");
+        if (g_config.net.nat.dns && g_config.net.nat.dns[0]) {
+            qdict_put_str(qdict, "dns", g_config.net.nat.dns);
+        }
     } else if (g_config.net.backend == CONFIG_NET_BACKEND_UDP) {
         qdict = qdict_new();
         qdict_put_str(qdict, "id",        id);
