@@ -108,3 +108,20 @@ https://github.com/openpak/docs/blob/main/xbox/native-service-architecture.md .
 Separate service images, core-backed identity/social state, original-Xbox
 namespace distinct from Xbox 360, and a fixed-port conflict with Demonware UDP
 3074 must be resolved. No Xbox service was deployed or guest networking enabled.
+
+## Gateway port audit — 2026-10-16
+
+Isolated test artifacts are in `../network-audit`: fresh client disk and EEPROM,
+loopback Ethernet harness, private native.pcap, source-section disassembly and
+read-back installer log. Earlier user disk/EEPROM were not reused for this test.
+The supplied xonlinedash module's native SG-init builder writes UDP destination
+3074 literally at VA 0x135f49, separate from its configured source port. Tag
+0x5802 identifies that packet as XB-to-SG init. No SNI routing applies.
+
+Wire capture reached DHCP only. First audit process (2718779) aborted on a
+PFIFO DMA-range assertion at pfifo.c:299. Diagnostic restart with boot-animation
+skip/software FPU reached the first-run notice then ended on SIGTERM; no claim
+that these settings cure the crash. Full authentication/physical-console trace
+is still pending. Local KDC build waits timed out behind another workspace build;
+no KDC service/database was started. Canonical evidence and scope:
+https://github.com/openpak/docs/blob/main/xbox/gateway-port-audit-2026-10-16.md .
