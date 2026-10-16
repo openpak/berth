@@ -70,3 +70,41 @@ and status. No backend was deployed or service parity demonstrated.
   not supply the official dashboard required for gate 2.
 - Firmware boot configuration keeps networking disabled. Native service and
   real-console parity remain untested. No Xbox backend container was started.
+
+## 5960 dashboard bring-up and network planning — 2026-10-16
+
+Supersedes the earlier missing-dashboard blocker. User supplied `5960.zip`
+(74079781 bytes) and `XboxDash1.00.5659.03V1.4.zip` (older release) in Downloads.
+5960 contains a 1961984-byte XBE titled Xbox Dashboard, fonts, xboxdashdata and
+xodash. Extracted under `../dashboard-5960`; guest bytes remain outside git.
+
+Installed 137 files into a separate sparse raw disk `../runtime/dashboard-5960.raw`
+using pyfatx 0.0.8. Every installed file was read back and SHA-256 compared to
+its source. The original HDDs and ZIPs were untouched. Preparation helpers are
+in scratch, not emulator source. `qemu-img` was also built with --enable-tools
+for future offline disk conversion; do not convert a disk actively in use.
+
+Official dashboard reaches its first-run notice, main menu and native Xbox Live
+connection test. Captures: `../runtime/dashboard-5960-window.png` (notice),
+`../runtime/xemu-2026-10-16-10-28-45.png` (main menu),
+`../runtime/xemu-2026-10-16-10-29-55.png` (connection test, cable unavailable).
+Version is supplied as 5960; exact System Info version remains to be checked.
+
+Vulkan run aborted: SIGABRT PID 2677574, assertion at
+hw/xbox/nv2a/pfifo.c:426 in pfifo_run_pusher (reserved/invalid GPU command).
+coredumpctl confirms that stack; no OOM evidence. Root cause remains unknown.
+Retried with separate `../runtime/dashboard-5960-opengl.toml` selecting OpenGL;
+main menu and connection test render, and user confirmed it was working.
+Both renderers initialize early contexts, so Vulkan device logs alone do not
+mean the selected renderer is Vulkan. No hardware-code workaround was added.
+
+Leave the user's current session running; stop automated input. Networking is
+still disabled, so the native connection-test failure is expected and is not
+an OpenPak service result. Keyboard bindings were edited by the user; preserve
+them. Do not share this EEPROM/MAC with concurrent emulators or real hardware.
+
+Next objective is planning how native Xbox services fit OpenPak. Canonical plan:
+https://github.com/openpak/docs/blob/main/xbox/native-service-architecture.md .
+Separate service images, core-backed identity/social state, original-Xbox
+namespace distinct from Xbox 360, and a fixed-port conflict with Demonware UDP
+3074 must be resolved. No Xbox service was deployed or guest networking enabled.
