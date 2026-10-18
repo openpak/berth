@@ -23,6 +23,7 @@ void ActionLoadDisc();
 void ActionLoadDiscFile(const char *file_path);
 void ActionTogglePause();
 void ActionReset();
+void ActionReturnToDashboard();
 void ActionShutdown();
 void ActionScreenshot();
 void ActionActivateBoundSnapshot(int slot, bool save);

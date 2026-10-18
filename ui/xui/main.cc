@@ -300,6 +300,10 @@ void xemu_hud_update(void)
         bool mod_key_down = ImGui::IsKeyDown(ImGuiKey_ModShift);
         for (int f_key = 0; f_key < 4; ++f_key) {
             if (ImGui::IsKeyPressed((enum ImGuiKey)(ImGuiKey_F5 + f_key))) {
+                // Plain F8 returns to the dashboard, only Shift+F8 saves
+                if (f_key == 3 && !mod_key_down) {
+                    break;
+                }
                 ActionActivateBoundSnapshot(f_key, mod_key_down);
                 break;
             }

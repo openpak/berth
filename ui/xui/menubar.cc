@@ -59,6 +59,13 @@ void ProcessKeyboardShortcuts(void)
         ActionReset();
     }
 
+    // Plain F8 only: Shift+F8 saves the fourth bound snapshot
+    ImGuiIO& io = ImGui::GetIO();
+    if (!io.WantTextInput && !io.KeyShift && !io.KeyCtrl && !io.KeyAlt &&
+        ImGui::IsKeyPressed(ImGuiKey_F8, false)) {
+        ActionReturnToDashboard();
+    }
+
     if (IsShortcutKeyPressed(ImGuiKey_Q)) {
         ActionShutdown();
     }
@@ -103,6 +110,8 @@ void ShowMainMenu()
 
                 for (int i = 0; i < 4; ++i) {
                     char *hotkey = g_strdup_printf("Shift+F%d", i + 5);
+                    // F8 is the dashboard key, so slot 4 has no load hotkey
+                    const char *load_hotkey = i == 3 ? NULL : hotkey + sizeof("Shift+") - 1;
 
                     char *load_name;
                     char *save_name;
@@ -121,7 +130,7 @@ void ShowMainMenu()
 
                     ImGui::Separator();
 
-                    if (ImGui::MenuItem(load_name, hotkey + sizeof("Shift+") - 1, false, bound)) {
+                    if (ImGui::MenuItem(load_name, load_hotkey, false, bound)) {
                         ActionActivateBoundSnapshot(i, false);
                     }
 
@@ -148,6 +157,7 @@ void ShowMainMenu()
 
             ImGui::Separator();
 
+            if (ImGui::MenuItem("Return to Dashboard (F8)")) ActionReturnToDashboard();
             if (ImGui::MenuItem("Reset", SHORTCUT_MENU_TEXT(R))) ActionReset();
             if (ImGui::MenuItem("Exit", SHORTCUT_MENU_TEXT(Q))) ActionShutdown();
             ImGui::EndMenu();

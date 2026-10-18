@@ -81,6 +81,17 @@ void ActionReset(void)
     qemu_system_reset_request(SHUTDOWN_CAUSE_GUEST_RESET);
 }
 
+void ActionReturnToDashboard(void)
+{
+    // The kernel boots an inserted disc ahead of the dashboard, so open the
+    // tray before the reset or a game would simply start again.
+    const char *dvd_path = g_config.sys.files.dvd_path;
+    if (dvd_path && dvd_path[0]) {
+        ActionEjectDisc();
+    }
+    ActionReset();
+}
+
 void ActionShutdown(void)
 {
     qemu_system_shutdown_request(SHUTDOWN_CAUSE_HOST_UI);

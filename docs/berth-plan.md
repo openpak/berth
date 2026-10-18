@@ -60,6 +60,14 @@ Upstream PR #3107 (NVNet queued-packet flushing) is open at initial inspection:
 https://github.com/xemu-project/xemu/pull/3107 . Track it during networking
 validation; it has not been imported into Berth.
 
+## Hotkeys
+
+F8 returns the guest to the Xbox dashboard from anywhere, including a running
+game and with the UI hidden. It ejects any inserted disc (the kernel would boot
+it ahead of the dashboard) and then resets the machine, which boots the
+dashboard from the HDD again. Machine > Return to Dashboard does the same.
+Shift+F8 still saves the fourth bound snapshot; plain F8 no longer loads it.
+
 ## Base selection
 
 xemu is a full-system hardware emulator and already supports the official
