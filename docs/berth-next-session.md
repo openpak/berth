@@ -125,3 +125,15 @@ that these settings cure the crash. Full authentication/physical-console trace
 is still pending. Local KDC build waits timed out behind another workspace build;
 no KDC service/database was started. Canonical evidence and scope:
 https://github.com/openpak/docs/blob/main/xbox/gateway-port-audit-2026-10-16.md .
+
+
+## Unified handle prerequisite live — 2026-10-18
+
+The core-owned permanent handle and coordinated existing-service migration are
+deployed. Native account provisioning must use GetAccount.handle verbatim as the
+Xbox gamertag, preserving the device/XUID credential domains. The identity-contract
+prerequisite is unblocked; this does not establish Berth native sign-in or repair
+its separate gateway/rendering issues. Bound console profiles need re-enrolment
+after the alpha name migration. No Berth guest/device provisioning or gameplay
+was performed by the identity rollout. Workspace evidence:
+`scratch/unified-handle/DEPLOYMENT.md`.
