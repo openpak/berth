@@ -104,7 +104,7 @@ an OpenPak service result. Keyboard bindings were edited by the user; preserve
 them. Do not share this EEPROM/MAC with concurrent emulators or real hardware.
 
 Next objective is planning how native Xbox services fit OpenPak. Canonical plan:
-https://github.com/openpak/docs/blob/main/xbox/native-service-architecture.md .
+`~/REPOS/Openpak/research/xbox/native-service-architecture.md`.
 Separate service images, core-backed identity/social state, original-Xbox
 namespace distinct from Xbox 360, and a fixed-port conflict with Demonware UDP
 3074 must be resolved. No Xbox service was deployed or guest networking enabled.
@@ -124,7 +124,7 @@ skip/software FPU reached the first-run notice then ended on SIGTERM; no claim
 that these settings cure the crash. Full authentication/physical-console trace
 is still pending. Local KDC build waits timed out behind another workspace build;
 no KDC service/database was started. Canonical evidence and scope:
-https://github.com/openpak/docs/blob/main/xbox/gateway-port-audit-2026-10-16.md .
+`~/REPOS/Openpak/research/xbox/gateway-port-audit-2026-10-16.md`.
 
 
 ## Unified handle prerequisite live — 2026-10-18
