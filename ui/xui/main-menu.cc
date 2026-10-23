@@ -385,14 +385,16 @@ void MainMenuInputView::Draw()
             // peripheral they want to use
             enum peripheral_type selected_type =
                 bound_state->peripheral_types[i];
-            const char *peripheral_type_names[2] = { "None", "Memory Unit" };
+            const char *peripheral_type_names[PERIPHERAL_TYPE_COUNT] = {
+                "None", "Memory Unit", "Xbox Live Communicator"
+            };
             const char *selected_peripheral_type =
                 peripheral_type_names[selected_type];
             ImGui::SetNextItemWidth(-FLT_MIN);
             if (ImGui::BeginCombo(comboLabels[i], selected_peripheral_type,
                                   ImGuiComboFlags_NoArrowButton)) {
                 // Handle all available peripheral types
-                for (int j = 0; j < 2; j++) {
+                for (int j = 0; j < PERIPHERAL_TYPE_COUNT; j++) {
                     bool is_selected = selected_type == j;
                     ImGui::PushID(j);
                     const char *selectable_label = peripheral_type_names[j];
@@ -405,6 +407,9 @@ void MainMenuInputView::Draw()
                                 // Another peripheral was already bound.
                                 // Unplugging
                                 xemu_input_unbind_xmu(active, i);
+                            } else if (bound_state->peripheral_types[i] ==
+                                       PERIPHERAL_XBLC) {
+                                xemu_input_unbind_xblc(active, i);
                             }
 
                             // Free the existing state
@@ -417,15 +422,20 @@ void MainMenuInputView::Draw()
                             (enum peripheral_type)j;
 
                         // Allocate state for the new peripheral
-                        if (j == PERIPHERAL_XMU) {
+                        if (j == PERIPHERAL_XMU || j == PERIPHERAL_XBLC) {
                             bound_state->peripherals[i] =
                                 g_malloc(sizeof(XmuState));
                             memset(bound_state->peripherals[i], 0,
                                    sizeof(XmuState));
                         }
 
-                        xemu_save_peripheral_settings(
-                            active, i, bound_state->peripheral_types[i], NULL);
+                        if (j == PERIPHERAL_XBLC) {
+                            xemu_input_bind_xblc(active, i, false);
+                        } else {
+                            xemu_save_peripheral_settings(
+                                active, i, bound_state->peripheral_types[i],
+                                NULL);
+                        }
                     }
 
                     if (is_selected) {

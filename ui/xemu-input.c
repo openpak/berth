@@ -693,6 +693,9 @@ void xemu_input_bind(int index, ControllerState *state, int save)
                 if (bound_controllers[index]->peripheral_types[i] ==
                     PERIPHERAL_XMU)
                     xemu_input_unbind_xmu(index, i);
+                else if (bound_controllers[index]->peripheral_types[i] ==
+                         PERIPHERAL_XBLC)
+                    xemu_input_unbind_xblc(index, i);
 
                 // Free up the XmuState and set the peripheral type to none
                 g_free(bound_controllers[index]->peripherals[i]);
@@ -905,6 +908,61 @@ void xemu_input_unbind_xmu(int player_index, int expansion_slot_index)
     }
 }
 
+bool xemu_input_bind_xblc(int player_index, int expansion_slot_index,
+                          bool is_rebind)
+{
+    assert(player_index >= 0 && player_index < 4);
+    assert(expansion_slot_index >= 0 && expansion_slot_index < 2);
+
+    ControllerState *player = bound_controllers[player_index];
+    if (player->peripheral_types[expansion_slot_index] != PERIPHERAL_XBLC)
+        return false;
+
+    // Uses the XmuState container; only the device pointer is meaningful
+    XmuState *xblc = (XmuState *)player->peripherals[expansion_slot_index];
+    if (xblc->dev != NULL)
+        return false;
+
+    const int xblc_map[2] = { 2, 3 };
+    QDict *qdict = qdict_new();
+    qdict_put_str(qdict, "driver", "usb-xblc");
+    char *tmp = g_strdup_printf("1.%d.%d", port_map[player_index],
+                                xblc_map[expansion_slot_index]);
+    qdict_put_str(qdict, "port", tmp);
+    g_free(tmp);
+
+    QemuOpts *opts =
+        qemu_opts_from_qdict(qemu_find_opts("device"), qdict, &error_abort);
+    DeviceState *dev = qdev_device_add(opts, &error_abort);
+    assert(dev);
+    xblc->dev = (void *)dev;
+    qobject_unref(qdict);
+
+    if (!is_rebind) {
+        xemu_save_peripheral_settings(player_index, expansion_slot_index,
+                                      PERIPHERAL_XBLC, "default");
+    }
+
+    return true;
+}
+
+void xemu_input_unbind_xblc(int player_index, int expansion_slot_index)
+{
+    assert(player_index >= 0 && player_index < 4);
+    assert(expansion_slot_index >= 0 && expansion_slot_index < 2);
+
+    ControllerState *state = bound_controllers[player_index];
+    if (state->peripheral_types[expansion_slot_index] != PERIPHERAL_XBLC)
+        return;
+
+    XmuState *xblc = (XmuState *)state->peripherals[expansion_slot_index];
+    if (xblc != NULL && xblc->dev != NULL) {
+        qdev_unplug((DeviceState *)xblc->dev, &error_abort);
+        object_unref(OBJECT(xblc->dev));
+        xblc->dev = NULL;
+    }
+}
+
 void xemu_input_rebind_xmu(int port)
 {
     // Try to bind peripherals back to controller
@@ -922,7 +980,19 @@ void xemu_input_rebind_xmu(int port)
 
         const char *param = *peripheral_params_settings_map[port][i];
 
-        if (peripheral_type == PERIPHERAL_XMU) {
+        if (peripheral_type == PERIPHERAL_XBLC) {
+            bound_controllers[port]->peripheral_types[i] = peripheral_type;
+            bound_controllers[port]->peripherals[i] = g_malloc(sizeof(XmuState));
+            memset(bound_controllers[port]->peripherals[i], 0,
+                   sizeof(XmuState));
+            if (xemu_input_bind_xblc(port, i, true)) {
+                char *buf = g_strdup_printf(
+                    "Connected Xbox Live Communicator to port %d%c", port + 1,
+                    'A' + i);
+                xemu_queue_notification(buf);
+                g_free(buf);
+            }
+        } else if (peripheral_type == PERIPHERAL_XMU) {
             if (param != NULL && strlen(param) > 0) {
                 // This is an XMU and needs to be bound to this controller
                 if (qemu_access(param, R_OK | W_OK) == 0) {
