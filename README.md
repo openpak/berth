@@ -34,7 +34,7 @@ Other files already in `docs/`:
 
 | | | |
 | --- | --- | --- |
-| [about/](docs/about/) | [berth-game-roms.md](docs/berth-game-roms.md) | [berth-next-session.md](docs/berth-next-session.md) |
+| [about/](docs/about/) | [berth-game-roms.md](docs/berth-game-roms.md) | |
 | [berth-plan.md](docs/berth-plan.md) | [block-replication.txt](docs/block-replication.txt) | [bypass-iommu.txt](docs/bypass-iommu.txt) |
 | [COLO-FT.txt](docs/COLO-FT.txt) | [colo-proxy.txt](docs/colo-proxy.txt) | [config/](docs/config/) |
 | [conf.py](docs/conf.py) | [defs.rst.inc](docs/defs.rst.inc) | [devel/](docs/devel/) |
