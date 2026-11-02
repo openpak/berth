@@ -9,7 +9,7 @@ Berth is an independent project. xemu remains our upstream base and is not
 replaced by this fork. It is not an official xemu release. It targets the
 original Xbox only, not Xbox 360, Xbox One or Xbox Series.
 
-**Status:** Experimental (boots, online not started)
+**Status:** Experimental (boots; dashboard signs in to OpenPak, no title online yet)
 
 ## Not affiliated
 
@@ -24,8 +24,7 @@ project. To report a security problem, contact the OpenPak maintainers privately
 through the contact on https://openpak.org and do not open a public issue.
 See [CONTRIBUTING.md](../CONTRIBUTING.md), inherited from xemu, for its design
 philosophy: faithful hardware emulation and no per-game hacks. Most useful:
-captures of what a real console and the 5960 dashboard send on the wire, and help
-tracking down the Vulkan assertion.
+captures of what a real console and the 5960 dashboard send on the wire.
 
 ## License and acknowledgements
 
