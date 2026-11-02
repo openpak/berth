@@ -2534,6 +2534,22 @@ static int xemu_check_file(const char *path)
     return 0;
 }
 
+/* Berth: qcow2 magic probe so the HDD -drive line names its format
+ * explicitly. Format probing guesses raw and then restricts block-0
+ * writes; qcow2 images must keep their own format. This matches QEMU's
+ * own probe result for these two formats. */
+static int xemu_is_qcow2(const char *path)
+{
+    FILE *fd = qemu_fopen(path, "rb");
+    if (fd == NULL) {
+        return 0;
+    }
+    char magic[4] = { 0 };
+    size_t n = fread(magic, 1, sizeof(magic), fd);
+    fclose(fd);
+    return n == sizeof(magic) && memcmp(magic, "QFI\xfb", 4) == 0;
+}
+
 // Duplicate commas to escape them
 static char *strdup_double_commas(const char *input) {
     size_t length = 0;
@@ -3066,7 +3082,8 @@ void qemu_init(int argc, char **argv)
         } else {
             fake_argv[fake_argc++] = strdup("-drive");
             char *escaped_hdd_path = strdup_double_commas(hdd_path);
-            fake_argv[fake_argc++] = g_strdup_printf("index=0,media=disk,file=%s%s",
+            fake_argv[fake_argc++] = g_strdup_printf("index=0,media=disk,format=%s,file=%s%s",
+                xemu_is_qcow2(hdd_path) ? "qcow2" : "raw",
                 escaped_hdd_path,
                 strlen(escaped_hdd_path) > 0 ? ",locked=on" : "");
             free(escaped_hdd_path);

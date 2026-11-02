@@ -284,9 +284,14 @@ static void pfifo_run_pusher(NV2AState *d)
     assert(GET_MASK(*push1, NV_PFIFO_CACHE1_PUSH1_MODE)
             == NV_PFIFO_CACHE1_PUSH1_MODE_DMA);
 
-    /* We're running so there should be no pending errors... */
-    assert(GET_MASK(*dma_state, NV_PFIFO_CACHE1_DMA_STATE_ERROR)
-            == NV_PFIFO_CACHE1_DMA_STATE_ERROR_NONE);
+    /* A pending DMA error suspends the pusher until the guest clears it,
+     * like the hardware: never process commands in the error state, and
+     * never abort the emulator on guest-driven FIFO state. */
+    if (GET_MASK(*dma_state, NV_PFIFO_CACHE1_DMA_STATE_ERROR)
+            != NV_PFIFO_CACHE1_DMA_STATE_ERROR_NONE) {
+        SET_MASK(*dma_push, NV_PFIFO_CACHE1_DMA_PUSH_STATUS, 1); /* suspended */
+        return;
+    }
 
     hwaddr dma_instance =
         GET_MASK(d->pfifo.regs[NV_PFIFO_CACHE1_DMA_INSTANCE],
@@ -300,7 +305,10 @@ static void pfifo_run_pusher(NV2AState *d)
         uint32_t dma_put_v = *dma_put;
         if (dma_get_v == dma_put_v) break;
         if (dma_get_v >= dma_len) {
-            assert(!"Dma value is out of range in PFIFO pusher");
+            fprintf(stderr,
+                    "nv2a: PFIFO pusher DMA_GET out of range, suspending: "
+                    "get=0x%x put=0x%x len=0x%" HWADDR_PRIx "\n",
+                    dma_get_v, dma_put_v, dma_len);
             SET_MASK(*dma_state, NV_PFIFO_CACHE1_DMA_STATE_ERROR,
                      NV_PFIFO_CACHE1_DMA_STATE_ERROR_PROTECTION);
             break;
@@ -444,7 +452,8 @@ static void pfifo_run_pusher(NV2AState *d)
     uint32_t error = GET_MASK(*dma_state, NV_PFIFO_CACHE1_DMA_STATE_ERROR);
     if (error) {
         NV2A_DPRINTF("pb error: %d\n", error);
-        assert(!"Error reported in PFIFO dma state - check logs for more info");
+        fprintf(stderr, "nv2a: PFIFO pusher suspended with DMA error %u\n",
+                error);
 
         SET_MASK(*dma_push, NV_PFIFO_CACHE1_DMA_PUSH_STATUS, 1); /* suspended */
 
